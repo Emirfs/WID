@@ -1,0 +1,98 @@
+# ─── İşletim Sistemi ───────────────────────────────────────────────────────────
+
+# macOS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# Linux
+*~
+
+# ─── Editör / IDE ──────────────────────────────────────────────────────────────
+
+# VS Code
+.vscode/
+!.vscode/extensions.json
+
+# JetBrains (CLion, IntelliJ vb.)
+.idea/
+*.iml
+*.iws
+*.ipr
+cmake-build-*/
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim / Neovim
+*.swp
+*.swo
+*.swn
+Session.vim
+.netrwhist
+
+# Emacs
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+
+# ─── Claude Code / AI ──────────────────────────────────────────────────────────
+
+# Oturum ve proje hafizasi (proje bazinda olusur, repoya dahil edilmez)
+project_memory/
+HANDOFF.md
+STATE.md
+
+# ─── Genel Gelistirme Dosyalari ────────────────────────────────────────────────
+
+# Log dosyalari
+*.log
+logs/
+
+# Gecici dosyalar
+*.tmp
+*.temp
+*.bak
+*.orig
+
+# ─── STM32 / Embedded (Ilerde proje klasorlerinde kullanilabilir) ──────────────
+
+# Build ciktilari
+build/
+out/
+Debug/
+Release/
+
+# Ikili dosyalar
+*.elf
+*.bin
+*.hex
+*.map
+*.axf
+
+# Derleyici ara dosyalari
+*.o
+*.d
+*.su
+*.lst
+
+# Kutuphane arsivleri
+*.a
+*.lib
+
+# IDE proje dosyalari (STM32CubeIDE)
+.cproject
+.mxproject
+*.launch

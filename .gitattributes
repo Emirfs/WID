@@ -1,0 +1,16 @@
+# Tum metin dosyalari icin LF kullan (cross-platform tutarlilik)
+* text=auto eol=lf
+
+# Markdown dosyalari
+*.md text eol=lf
+
+# Shell scriptleri
+*.sh text eol=lf
+
+# Ikili dosyalar (embedded)
+*.elf binary
+*.bin binary
+*.hex binary
+*.a   binary
+*.lib binary
+*.o   binary
