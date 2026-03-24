@@ -201,3 +201,45 @@ WebFetch başarısız veya yetersiz olduğunda:
 | Tüm platformlar başarısız | Durum: BAŞARISIZ — "Hiçbir platformdan veri alınamadı" |
 
 ---
+
+## Rapor Formatı
+
+Aşağıdaki formatı birebir kullan. Zaman damgası YYYY-MM-DD HH:MM UTC formatında olmalıdır.
+
+───────────────────────────────────────────
+
+## Fiyat Karşılaştırma Raporu — {Bileşen}
+*{YYYY-MM-DD HH:MM UTC} tarihinde alınan fiyatlar*
+
+| Platform | Birim Fiyat (USD) | Birim Fiyat (TRY) | MOQ | Stok | Kargo | {Miktar} Adet Toplam (USD) | {Miktar} Adet Toplam (TRY) | Link |
+|----------|-------------------|-------------------|-----|------|-------|----------------------------|----------------------------|------|
+| LCSC     | $0.85             | ₺28.90            | 1   | 5000+| $3.20 | $11.70                     | ₺398.20                    | [↗](url) |
+| Mouser   | $1.12 (Tahmini)   | ₺38.08 (Tahmini)  | 1   | 2341 | Ücretsiz | $11.20                 | ₺380.80                    | [↗](url) |
+
+*Kullanıcı tek para birimi belirtmişse (ör. Para Birimi: USD), TRY sütunları kaldırılır.*
+
+### En İyi Öneri
+{Miktar} adet için → **{Platform}** ({toplam_usd} / {toplam_try}, {kargo_durumu})
+
+### Notlar
+- {Varsa MOQ uyarıları}
+- {Varsa stok uyarıları}
+- {Varsa "Tahmini — doğrulayın" uyarıları}
+- {Varsa döviz kuru uyarıları}
+
+### Kullanıcı İçin Notlar
+- Fiyatlar anlık olup değişkenlik gösterebilir; siparişten önce platformu ziyaret edin
+- "Tahmini" işaretli fiyatlar WebSearch snippet'inden alınmıştır, daha az güvenilirdir
+- Kargo ücretleri ülkeye ve sipariş büyüklüğüne göre farklılık gösterebilir
+
+## Durum
+BAŞARILI
+
+───────────────────────────────────────────
+
+**Durum değerleri:**
+- BAŞARILI — en az bir platformdan tam fiyat bilgisi alındı
+- KISMEN_TAMAMLANDI — bazı platformlar erişilemedi veya tahmini fiyat kullanıldı
+- BAŞARISIZ — hiçbir platformdan fiyat bilgisi alınamadı
+
+---
