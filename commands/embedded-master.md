@@ -63,6 +63,9 @@ Mesajda "readme", "dokümantasyon", "belgele", "proje açıklaması",
 Mesajda "commit", "push", "pull", "branch", "merge", "PR", "rebase",
          "stash", "github", "versiyon", "sürüm", "kaydet", "handoff",
          "changelog" → github-agent
+Mesajda "footprint", "kütüphane", "library", "sembol", "symbol",
+         "3D model", "bileşen indir", "component download",
+         "footprint ara", "kicad kütüphanesi", "altium library" → footprint-scout
 ```
 
 Seçimden önce kullanıcıya açıkla:
