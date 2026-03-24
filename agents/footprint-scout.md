@@ -95,3 +95,85 @@ Eksik key'ler için kullanıcıya sor. Girilirse STATE.md'ye ekle. Girilmezse:
 ```
 
 `## API Keys` bölümü zaten varsa ilgili satırı ekle/güncelle. Yoksa dosya sonuna tüm bölümü yaz.
+
+---
+
+## Arama Motoru
+
+5 kaynakta aynı anda arama yap. Her kaynak için kaynak başına 10 saniye timeout uygula.
+
+### SnapEDA
+
+**API (key varsa):**
+```
+GET https://api.snapeda.com/v1/parts/search?q={PART_NUMBER}&format={kicad|altium}
+Headers: Authorization: Bearer {SNAPEDA_API_KEY}
+```
+Yanıttan: `rating` (0–5 skala), dosya indirme URL'leri
+
+**WebFetch fallback (key yoksa):**
+```
+URL: https://www.snapeda.com/parts/search/?q={PART_NUMBER}
+```
+HTML'den `rating`, `download` linklerini parse et.
+
+---
+
+### UltraLibrarian
+
+**API (key varsa):**
+```
+GET https://app.ultralibrarian.com/api/search?query={PART_NUMBER}&format={kicad|altium}
+Headers: X-API-Key: {ULTRALIBRARIAN_API_KEY}
+```
+Yanıttan: `download_count` (normalize edilecek), indirme URL'leri
+
+**WebFetch fallback (key yoksa):**
+```
+URL: https://www.ultralibrarian.com/search?query={PART_NUMBER}
+```
+HTML'den `download_count` ve indirme bağlantılarını çıkar.
+
+---
+
+### Samacsys Component Search Engine
+
+**API (key varsa):**
+```
+GET https://componentsearchengine.com/api/v1/search?term={PART_NUMBER}&format={kicad|altium}
+Headers: X-Api-Key: {SAMACSYS_API_KEY}
+```
+Yanıttan: `user_rating` (0–5 skala), dosya URL'leri
+
+**WebFetch fallback (key yoksa):**
+```
+URL: https://componentsearchengine.com/search.php?term={PART_NUMBER}
+```
+HTML'den `rating` ve `download` bağlantılarını çıkar.
+
+---
+
+### Mouser (yalnızca API — WebFetch fallback YOK)
+
+**API (key zorunlu):**
+```
+POST https://api.mouser.com/api/v1/search/keyword
+Headers: Content-Type: application/json
+Body: {"SearchByKeywordRequest": {"keyword": "{PART_NUMBER}", "records": 5}}
+Query: apiKey={MOUSER_API_KEY}
+```
+Yanıttan: `Availability` (stok sayısı), `UnitPrice` — stok skoru hesapla.
+Key yoksa → bu kaynağı atla, raporda "Mouser: API key eksik" yaz.
+
+---
+
+### DigiKey (yalnızca API — WebFetch fallback YOK)
+
+**API (key zorunlu):**
+```
+POST https://api.digikey.com/products/v4/search/keyword
+Headers: Authorization: Bearer {token}, X-DIGIKEY-Client-Id: {DIGIKEY_CLIENT_ID}
+Body: {"keywords": "{PART_NUMBER}", "limit": 5}
+```
+Token için önce OAuth2 endpoint'ine DIGIKEY_CLIENT_ID + DIGIKEY_CLIENT_SECRET ile istek at.
+Key yoksa → bu kaynağı atla, raporda "DigiKey: API key eksik" yaz.
