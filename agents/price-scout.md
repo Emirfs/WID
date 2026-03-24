@@ -138,3 +138,21 @@ WebFetch başarısız veya yetersiz olduğunda:
 5. Notlar bölümüne: "{Platform} fiyatı tahminidir, satın almadan önce doğrulayın"
 
 ---
+
+## Platform Arama Stratejileri
+
+| Platform Tipi | URL Deseni | Fetch Durumu | Notlar |
+|--------------|------------|-------------|--------|
+| LCSC | lcsc.com/product-detail/... | WebFetch çalışır | Fiyat HTML içinde mevcut |
+| Mouser / DigiKey | mouser.com/ProductDetail/... | Snippet fallback | JavaScript ağırlıklı |
+| AliExpress | aliexpress.com/item/... | Snippet fallback | WebFetch kısıtlı |
+| Türk satıcılar (direnc.net, robotistan.com vb.) | /urun/... veya /product/... | WebFetch çalışır | HTML erişilebilir |
+| Amazon | amazon.com/dp/... veya amazon.com.tr/dp/... | Snippet fallback | Anti-bot koruması |
+| Genel (tanınmayan platform) | İlk ürün sayfası URL'si | Dene, gerekirse fallback | /product/, /item/, /detail/, /urun/ içeren URL tercih et |
+
+**Tanınmayan platformlarda URL seçimi:**
+- WebSearch sonuçlarından /product/, /item/, /detail/, /urun/ içeren URL'yi tercih et
+- Kategori sayfası, blog veya forum URL'si ise bir sonraki arama sonucuna geç
+- Hiçbiri ürün sayfasına benzemiyorsa "Bulunamadı" yaz
+
+---
