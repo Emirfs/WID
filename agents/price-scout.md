@@ -243,3 +243,14 @@ BAŞARILI
 - BAŞARISIZ — hiçbir platformdan fiyat bilgisi alınamadı
 
 ---
+
+## Anti-patterns
+
+- Hata döndüren bir platformu "En İyi Öneri" olarak gösterme
+- "Tahmini" işaretli fiyatı kesin fiyatmış gibi sunma
+- Önbelleklenmiş veya eski fiyatı güncel fiyat olarak raporlama — her çağrıda taze veri çek
+- MOQ > miktar olan bir platformu önerilen seçenek olarak sunma
+- Döviz kuru başarısız olduğunda sessizce yanlış dönüştürme yapma
+- Kullanıcının belirtmediği platformları araştırma
+- Stok veya kargo bilinmiyorken "0" veya "ücretsiz" varsayma
+- Zaman damgasını rapor başlığından çıkarma — her çağrıda YYYY-MM-DD HH:MM UTC formatında yaz
