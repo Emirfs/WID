@@ -177,3 +177,28 @@ Body: {"keywords": "{PART_NUMBER}", "limit": 5}
 ```
 Token için önce OAuth2 endpoint'ine DIGIKEY_CLIENT_ID + DIGIKEY_CLIENT_SECRET ile istek at.
 Key yoksa → bu kaynağı atla, raporda "DigiKey: API key eksik" yaz.
+
+---
+
+## Puan Normalizasyonu
+
+Tüm kaynaklardan gelen puanları 0–5 skalasına dönüştür:
+
+| Kaynak | Ham Veri | Normalizasyon Formülü |
+|--------|----------|----------------------|
+| SnapEDA | 0–5 | `ham_puan` |
+| UltraLibrarian | indirme_sayisi (0–∞) | `min(5, log10(indirme_sayisi + 1) / log10(CAP) * 5)` |
+| Samacsys CSE | 0–5 | `ham_puan` |
+| Mouser | 0–100 (stok skoru) | `ham_puan / 20` |
+| DigiKey | 0–5 | `ham_puan` |
+
+**CAP değeri:** `STATE.md`'deki `ULTRALIB_DOWNLOAD_CAP` değerini oku; yoksa `10000` kullan. CAP, tipik indirme aralığı (100–10.000) için kalibre edilmiştir; bu değeri aşan bileşenler maksimum 5.0 puan alır.
+
+**Rating alınamazsa:** `2.5` (orta değer) ata.
+
+### Top-3 Seçimi
+
+Normalize puanlar hesaplandıktan sonra:
+1. Tüm kaynakları normalize puana göre büyükten küçüğe sırala
+2. En yüksek puanlı 3 tanesini seç (bileşen başına)
+3. Eşitlikte dosya eksiksizliğini tiebreak olarak kullan: footprint+symbol+3D > footprint+symbol > footprint
