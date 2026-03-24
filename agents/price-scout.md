@@ -156,3 +156,34 @@ WebFetch başarısız veya yetersiz olduğunda:
 - Hiçbiri ürün sayfasına benzemiyorsa "Bulunamadı" yaz
 
 ---
+
+## Para Birimi Normalizasyonu
+
+1. Varsayılan: hem USD hem TRY sütunları göster. Kullanıcı tek birim belirtmişse yalnızca o sütun.
+2. Platformlardan çekilen her benzersiz para birimi için ayrı kur sorgusu yap:
+   "{kaynak} to {hedef} exchange rate today" — ör. "CNY to USD exchange rate today"
+3. Başarılı kur → fiyatı çevir, tabloda dönüştürülmüş değeri göster
+4. Birden fazla kaynak para birimi varsa (USD, CNY, EUR, GBP vb.) → her biri için ayrı kur çek
+5. Kur alınamazsa veya belirsiz sonuç varsa → o platform orijinal para biriminde kalır,
+   Notlar'a: "Döviz kuru alınamadı; {Platform} fiyatı {birim} cinsinden gösteriliyor"
+
+---
+
+## MOQ ve En İyi Öneri Mantığı
+
+### MOQ (Minimum Sipariş Miktarı) Tespiti
+- WebFetch içeriği veya snippet'ten MOQ'yu bulmaya çalış
+- MOQ bulunamazsa → tablo sütununa "?" yaz
+- MOQ > istenen miktar ise:
+  - Tablo satırında MOQ değerini göster
+  - "En İyi Öneri" bölümünden çıkar
+  - Notlar'a: "{Platform} için minimum sipariş miktarı {MOQ} adettir"
+
+### En İyi Öneri Seçim Kriterleri (öncelik sırası)
+1. En düşük toplam maliyet (birim fiyat × miktar + kargo)
+2. Kargo bilinmiyorsa en düşük birim fiyat; raporda "kargo hariç" notu ekle
+3. MOQ > miktar olan platformlar öneri dışı (tabloda gösterilir)
+4. Eşitlikte daha yüksek stok tercih edilir
+5. "Erişilemedi" veya "Tahmini — doğrulayın" işaretli platformlar öneri dışıdır
+
+---
