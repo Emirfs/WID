@@ -48,6 +48,9 @@ Session.vim
 /.emacs.desktop.lock
 *.elc
 
+# ─── Git Worktrees ─────────────────────────────────────────────────────────────
+.worktrees/
+
 # ─── Claude Code / AI ──────────────────────────────────────────────────────────
 
 # Oturum ve proje hafizasi (proje bazinda olusur, repoya dahil edilmez)
