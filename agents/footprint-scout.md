@@ -58,7 +58,7 @@ STM32F405RGT6, RC0402 10k, GRM155R61A105KE15D
 `cwd`'den başlayarak yukarı doğru `STATE.md` dosyasını ara:
 
 ```bash
-find . -name "STATE.md" -maxdepth 5 2>/dev/null | head -1
+find . -name "STATE.md" 2>/dev/null | sort | head -1
 ```
 
 STATE.md bulunan dizin = proje kökü. Bulunamazsa `cwd` kullanılır.
@@ -95,6 +95,28 @@ Eksik key'ler için kullanıcıya sor. Girilirse STATE.md'ye ekle. Girilmezse:
 ```
 
 `## API Keys` bölümü zaten varsa ilgili satırı ekle/güncelle. Yoksa dosya sonuna tüm bölümü yaz.
+
+---
+
+## Çalışma Akışı
+
+Her bileşen için sırayla şu adımları uygula:
+
+```
+[1] Bileşeni al ve formatı belirle
+[2] Proje kökünü bul (STATE.md traversal)
+[3] API key'leri oku, eksikleri sor
+[4] 5 kaynakta paralel ara (kaynak başına 10s timeout)
+[5] Puanları normalize et → top-3 seç
+[5a] Duplicate kontrolü → varsa atla (--force yoksa)
+[5b] Dosyaları indir: footprint + symbol + 3D model
+[5c] Bileşen tipini sınıflandır (majority voting → keyword)
+[5d] footprints/{TIP}/{FORMAT}/ klasörüne yaz
+[5e] library_index.json güncelle
+[6] Özet rapor oluştur
+```
+
+Toplu arama (virgülle ayrılmış bileşenler): her bileşen bu akışı sırayla tamamlar, tüm bileşenler bittikten sonra tek özet rapor oluşturulur.
 
 ---
 
@@ -341,6 +363,27 @@ library_index.json yoksa önce `{}` içeriğiyle oluştur.
 ## Durum
 BAŞARILI
 ```
+
+---
+
+## Entegrasyon Kontratı
+
+`library_index.json`'dan okuyan ajanlar şu alanları kullanabilir:
+
+| Alan | Tip | Açıklama |
+|------|-----|----------|
+| `type` | string | Semantik bileşen tipi — tekil form ("resistor", "ic", "connector") |
+| `files` | string[] | Proje köküne göreli dosya yolları |
+| `format` | string | `kicad` veya `altium` |
+| `manufacturer` | string | Üretici adı |
+| `description` | string | İnsan okunabilir bileşen açıklaması |
+
+- `schematic-analyst` → `files` listesiyle footprint'in mevcut olup olmadığını kontrol eder
+- `hardware-reviewer` → `type` ve `description` ile BOM bileşenini doğrular
+
+**Rapor formatı notu:** Çıktı tablosu 5 sütun içerir (Bileşen, Kaynak, Normalize Puan, Format, Dosyalar) — bu tasarım gereğidir.
+
+**UltraLibrarian 0-indirme durumu:** İndirme sayısı 0 olan bileşenler `log10(0+1) = 0` formülünden `normalized_rating: 0.0` alır. Bu beklenen davranıştır.
 
 ---
 
