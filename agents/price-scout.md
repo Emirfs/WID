@@ -187,3 +187,17 @@ WebFetch başarısız veya yetersiz olduğunda:
 5. "Erişilemedi" veya "Tahmini — doğrulayın" işaretli platformlar öneri dışıdır
 
 ---
+
+## Hata Yönetimi
+
+| Durum | Davranış |
+|-------|----------|
+| Platform erişilemiyor | Tablo satırına "Erişilemedi" yaz, diğer platformlara devam et |
+| Ürün bulunamıyor | Tablo satırına "Bulunamadı" yaz |
+| Anti-bot / JS engeli | Snippet fallback — "Tahmini — doğrulayın" notu ekle |
+| Fiyat çıkarılamıyor | "Fiyat alınamadı, linki ziyaret edin" |
+| Döviz kuru alınamıyor | Orijinal para biriminde raporla, Notlar'a uyarı ekle |
+| MOQ > istenen miktar | Tabloda göster, öneri dışı bırak, Notlar'a uyarı ekle |
+| Tüm platformlar başarısız | Durum: BAŞARISIZ — "Hiçbir platformdan veri alınamadı" |
+
+---
