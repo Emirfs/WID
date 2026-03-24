@@ -202,3 +202,88 @@ Normalize puanlar hesaplandıktan sonra:
 1. Tüm kaynakları normalize puana göre büyükten küçüğe sırala
 2. En yüksek puanlı 3 tanesini seç (bileşen başına)
 3. Eşitlikte dosya eksiksizliğini tiebreak olarak kullan: footprint+symbol+3D > footprint+symbol > footprint
+
+---
+
+## Bileşen Tipi Sınıflandırması
+
+Klasör adını belirlemek için şu sırayı uygula:
+
+**1. API kategori alanı (çoğunluk oylaması):**
+Top-3 kaynaklardan dönen `category`/`type` alanları toplanır.
+2/3 oy alan kategori kazanır. Eşitlikte en yüksek normalize puanlı kaynağın kategorisi seçilir.
+Hiçbir kaynak kategori döndürmezse 2. adıma geç.
+
+**2. Part number anahtar kelimesi eşleşmesi:**
+
+| Klasör | Eşleşen kelimeler (büyük/küçük harf duyarsız) |
+|--------|-----------------------------------------------|
+| `resistors` | R, RES, ohm, resistor |
+| `capacitors` | C, CAP, farad, capacitor |
+| `inductors` | L, IND, henry, inductor, ferrite |
+| `transistors` | Q, BJT, MOSFET, FET, transistor |
+| `diodes` | D, LED, TVS, zener, schottky, diode |
+| `ics` | IC, MCU, STM, ESP, NRF, op-amp, regulator, U |
+| `connectors` | J, CON, connector, header, USB, RJ |
+| `crystals` | Y, XTAL, crystal, oscillator |
+| `misc` | (hiçbiri eşleşmezse) |
+
+---
+
+## Kütüphane Yazma
+
+### Klasör Oluşturma
+
+```bash
+mkdir -p footprints/{TIP}/{FORMAT}
+```
+
+Örnekler:
+- `footprints/ics/kicad/`
+- `footprints/resistors/altium/`
+
+### Duplicate Kontrolü
+
+Dosya yazmadan önce `library_index.json` içinde part number'ı kontrol et:
+
+```bash
+grep -q '"{PART_NUMBER}"' footprints/library_index.json 2>/dev/null && echo "DUPLICATE" || echo "YENİ"
+```
+
+- DUPLICATE → kullanıcıya bildir, `--force` verilmişse devam et, verilmemişse atla
+- YENİ → indirme ve yazma işlemine devam et
+
+### Dosya İndirme ve Kaydetme
+
+Her top-3 kaynaktan dosyaları indir:
+1. Footprint → `footprints/{TIP}/{FORMAT}/{PART}_{KAYNAK}.{EXT}`
+2. Symbol → `footprints/{TIP}/{FORMAT}/{PART}_{KAYNAK}_sym.{EXT}`
+3. 3D Model → `footprints/{TIP}/{FORMAT}/{PART}_{KAYNAK}.step`
+
+3D model yoksa uyarı yaz, hata verme.
+
+### library_index.json Güncelleme
+
+Bileşeni index'e ekle veya güncelle:
+
+```json
+{
+  "{PART_NUMBER}": {
+    "type": "{TIP}",
+    "manufacturer": "{ÜRETİCİ}",
+    "description": "{AÇIKLAMA}",
+    "sources": ["{KAYNAK_1}", "{KAYNAK_2}", "{KAYNAK_3}"],
+    "normalized_rating": {EN_YÜKSEK_PUAN},
+    "format": "{kicad|altium}",
+    "downloaded_at": "{ISO_TIMESTAMP}",
+    "files": [
+      "footprints/{TIP}/{FORMAT}/{PART}_{KAYNAK_1}.{EXT}",
+      "..."
+    ]
+  }
+}
+```
+
+library_index.json yoksa önce `{}` içeriğiyle oluştur.
+
+**Önemli:** `type` alanı semantik (tekil) formu kullanır: `"resistor"`, `"ic"`, `"connector"` — `"resistors"` değil. `files` alanı proje köküne göreli tam yol içerir.
