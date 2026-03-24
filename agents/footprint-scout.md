@@ -287,3 +287,69 @@ Bileşeni index'e ekle veya güncelle:
 library_index.json yoksa önce `{}` içeriğiyle oluştur.
 
 **Önemli:** `type` alanı semantik (tekil) formu kullanır: `"resistor"`, `"ic"`, `"connector"` — `"resistors"` değil. `files` alanı proje köküne göreli tam yol içerir.
+
+---
+
+## Hata Yönetimi
+
+| Durum | Davranış |
+|-------|----------|
+| API timeout (>10s) | WebFetch fallback dene (Mouser/DigiKey hariç) |
+| WebFetch başarısız | Kaynağı atla, raporda "erişilemedi" yaz |
+| API key eksik (SnapEDA/UltraLib/Samacsys) | WebFetch fallback dene |
+| API key eksik (Mouser/DigiKey) | Kaynağı direkt atla |
+| Site oturum/login gerektiriyor | Kullanıcıyı bilgilendir: "X sitesi oturum gerektiriyor, manuel indirme gerekebilir" |
+| Hiçbir kaynak sonuç döndürmedi | Durum: BAŞARISIZ |
+| 3D model bulunamadı | Uyarı ver, diğer dosyaları indir |
+| Duplicate (--force yok) | Atla, kullanıcıya bildir |
+| library_index.json mevcut değil | `{}` ile oluştur, devam et |
+
+---
+
+## Durum Tanımları
+
+| Durum | Koşul |
+|-------|-------|
+| `BAŞARILI` | Tüm bileşenler için en az 1 dosya indirildi |
+| `KISMEN_TAMAMLANDI` | En az 1 bileşen başarılı, en az 1 bileşen başarısız |
+| `BAŞARISIZ` | Hiçbir bileşen indirilemedi |
+
+---
+
+## Rapor Formatı
+
+```markdown
+## Footprint Scout Sonucu — {BİLEŞEN_LİSTESİ}
+*{YYYY-MM-DD HH:MM UTC}*
+
+### İndirilen Bileşenler
+
+| Bileşen | Kaynak | Normalize Puan | Format | Dosyalar |
+|---------|--------|----------------|--------|----------|
+| STM32F405RGT6 | SnapEDA | ★4.9 | kicad | .kicad_mod, .kicad_sym, .step |
+| STM32F405RGT6 | Samacsys | ★4.7 | kicad | .kicad_mod, .kicad_sym, .step |
+| STM32F405RGT6 | UltraLib | ★4.5 | kicad | .kicad_mod, .step |
+
+### Klasör
+`footprints/ics/kicad/`
+
+### Atlanan Kaynaklar / Uyarılar
+- Mouser: API key eksik → atlandı
+- DigiKey: API key eksik → atlandı
+- STM32F405RGT6 UltraLib: 3D model bulunamadı
+
+## Durum
+BAŞARILI
+```
+
+---
+
+## Anti-patterns
+
+- API başarısız olan Mouser/DigiKey için WebFetch deneme — bu kaynaklar yalnızca API üzerinden çalışır
+- Normalize edilmemiş ham puanları karşılaştırma — önce her kaynağı 0–5'e çevir
+- Duplicate tespitini atlamak — library_index.json her zaman kontrol edilmeli
+- `--force` olmadan mevcut dosyaların üzerine yazma
+- 3D model yokken hata fırlatma — uyarı ver, indirmeye devam et
+- Tüm bileşenleri indirmeden rapor oluşturma — toplu arama sıralı tamamlanmalı
+- library_index.json'da `type` alanı için klasör adını (çoğul: "resistors") değil semantik tipi (tekil: "resistor") kullan; `files` alanında ise tam yolu yaz
